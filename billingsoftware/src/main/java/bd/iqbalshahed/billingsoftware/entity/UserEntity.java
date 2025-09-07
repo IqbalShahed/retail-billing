@@ -27,6 +27,7 @@ public class UserEntity {
     private String password;
     private String role;
     private String name;
+    private String imgUrl;
     @CreationTimestamp
     @Column(updatable = false)
     private Timestamp createdAt;

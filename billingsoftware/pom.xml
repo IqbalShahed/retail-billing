@@ -112,12 +112,12 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
+                <version>3.5.5</version>
+                <configuration>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-                            <version>1.18.38</version>
 						</exclude>
 					</excludes>
 				</configuration>

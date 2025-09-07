@@ -6,33 +6,45 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.core.SpringVersion;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
+
 
 @Entity
-@Table(name = "tbl_category")
-@Builder
+@Table(name = "tbl_items")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryEntity {
+@Builder
+public class ItemEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(unique = true)
-    private String categoryId;
+    private String itemId;
+
     @Column(unique = true)
     private String name;
+    private BigDecimal price;
     private String description;
-    private String imgUrl;
+
     @CreationTimestamp
     @Column(updatable = false)
-    private Timestamp createAt;
-    @UpdateTimestamp
-    private Timestamp updateAt;
+    private Timestamp createdAt;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<ItemEntity> items;
+    @UpdateTimestamp
+    private Timestamp updatedAt;
+
+    private String imgUrl;
+
+    @ManyToOne
+    @JoinColumn(name = "category_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    private CategoryEntity category;
 }

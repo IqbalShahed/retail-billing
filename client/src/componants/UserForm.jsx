@@ -1,18 +1,18 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 import assets from "../assets/assets";
-import { addCategory } from "../service/CategoryService";
 import { AppContext } from "../context/AppContext";
+import { addUser } from "../service/UserService";
 
 const MAX_IMAGE_SIZE_MB = 2;
 
-const CategoryForm = () => {
-    const { setCategories } = useContext(AppContext);
+const UserForm = ({ setUsers }) => {
     const [file, setFile] = useState(null);
     const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
-    
+
 
     const isValidImage = (f) =>
         f && f.type.startsWith("image/") && f.size <= MAX_IMAGE_SIZE_MB * 1024 * 1024;
@@ -30,32 +30,35 @@ const CategoryForm = () => {
         setLoading(true);
 
         try {
-            // Build the category request
-            const categoryRequest = {
+            // Build the user request
+            const userRequest = {
                 name,
-                description,
+                email,
+                password,
+                role: "ROLE_USER"
             };
 
             // Build FormData
             const formData = new FormData();
-            formData.append("category", JSON.stringify(categoryRequest));
+            formData.append("user", JSON.stringify(userRequest));
             if (file) {
                 formData.append("file", file);
             }
 
             // Send request
-            const res = await addCategory(formData);
-            if (res?.data) {
-                setCategories((prev) => [...prev, res.data]);
-                toast.success("Category added successfully!");
+            const res = await addUser(formData);
+            if (res) {
+                setUsers((prev) => [...prev, res]);
+                toast.success("User added successfully!");
             }
             // Reset form
             setFile(null);
             setName("");
-            setDescription("");
+            setEmail("");
+            setPassword("");
         } catch (err) {
             console.error(err);
-            toast.error(err.response?.data?.message || "Failed to create category.");
+            toast.error(err.response?.data?.message || "Failed to create user.");
         } finally {
             setLoading(false);
         }
@@ -85,9 +88,9 @@ const CategoryForm = () => {
                 </label>
             </div>
 
-            {/* Category Name */}
+            {/* User Name */}
             <div className="w-full">
-                <p className="mb-2">Category Name</p>
+                <p className="mb-2">User Name</p>
                 <input
                     type="text"
                     className="w-full max-w-[500px] px-3 py-2 border border-gray-300"
@@ -98,17 +101,32 @@ const CategoryForm = () => {
                 />
             </div>
 
-            {/* Category Description */}
+            {/* User Email */}
             <div className="w-full">
-                <p className="mb-2">Category Description</p>
-                <textarea
+                <p className="mb-2">User Email</p>
+                <input
+                    type="email"
                     className="w-full max-w-[500px] px-3 py-2 border border-gray-300"
-                    placeholder="Write content here"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Enter user email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                 />
             </div>
+
+            {/* User Email */}
+            <div className="w-full">
+                <p className="mb-2">User Email</p>
+                <input
+                    type="password"
+                    className="w-full max-w-[500px] px-3 py-2 border border-gray-300"
+                    placeholder="Enter user password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                />
+            </div>
+
             <button
                 type="submit"
                 className="w-28 py-3 mt-4 bg-black text-white rounded-lg"
@@ -120,4 +138,4 @@ const CategoryForm = () => {
     );
 };
 
-export default CategoryForm;
+export default UserForm;

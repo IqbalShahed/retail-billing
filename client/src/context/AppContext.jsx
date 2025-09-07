@@ -1,27 +1,36 @@
 import { createContext, useEffect, useState } from "react";
 import { deleteCategory, fetchCategories } from "../service/CategoryService";
+import { deleteItem, fetchItems } from "../service/ItemService";
 import { toast } from "react-toastify";
-
 
 export const AppContext = createContext({});
 
-export const AppContextProvider = ({children}) =>{
-
+export const AppContextProvider = ({ children }) => {
     const [categories, setCategories] = useState([]);
+    const [items, setItems] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [auth, setAuth] = useState(() => ({
+        token: localStorage.getItem("token"),
+        role: localStorage.getItem("role"),
+    }));
 
-    // Fetch categories from backend
+    // Fetch categories + items
     useEffect(() => {
         const loadData = async () => {
             setLoading(true);
             try {
-                const res = await fetchCategories();
+                const responseCategories = await fetchCategories();
+                if (Array.isArray(responseCategories.data)) {
+                    setCategories(responseCategories.data);
+                }
 
-                if (Array.isArray(res.data)) {
-                    setCategories(res.data);
+                const responseItems = await fetchItems();
+                if (Array.isArray(responseItems.data)) {
+                    setItems(responseItems.data);
                 }
             } catch (err) {
-                console.error("Error fetching categories:", err);
+                console.error("Error fetching data:", err);
+                toast.error("Failed to fetch categories or items.");
             } finally {
                 setLoading(false);
             }
@@ -30,31 +39,86 @@ export const AppContextProvider = ({children}) =>{
         loadData();
     }, []);
 
-        // Handle delete category
-        const handleDelete = async (categoryId) => {
-            if (!window.confirm("Are you sure you want to delete this category?")) return;
-    
-            try {
-                await deleteCategory(categoryId);
-                // Update state after delete
-                const updated = categories.filter((cat) => cat.categoryId !== categoryId);
-                setCategories(updated);
-            } catch (err) {
-                console.error("Error deleting category:", err);
-                toast.error(err.response?.data?.message || "Failed to delete category. Please try again.");
-            }
-        };
+    // Delete category
+    const handleDeleteCategory = async (categoryId) => {
+        if (!window.confirm("Are you sure you want to delete this category?")) return;
 
-    const contextValue = {
-        categories,
-        setCategories,
-        loading,
-        handleDelete
-    }
+        try {
+            await deleteCategory(categoryId);
+
+            setCategories((prev) =>
+                prev.filter((cat) => cat.categoryId !== categoryId)
+            );
+            setItems((prev) =>
+                prev.filter((item) => item.categoryId !== categoryId)
+            );
+
+            toast.success("Category and its items deleted successfully!");
+        } catch (err) {
+            console.error("Error deleting category:", err);
+            toast.error(err.response?.data?.message || "Failed to delete category.");
+        }
+    };
+
+    // Delete item
+    const handleDeleteItem = async (itemId) => {
+        if (!window.confirm("Are you sure you want to delete this item?")) return;
+
+        try {
+            await deleteItem(itemId);
+
+            // find deleted item
+            const deletedItem = items.find((item) => item.itemId === itemId);
+
+            // update items
+            setItems((prev) => prev.filter((item) => item.itemId !== itemId));
+
+            // update category item count
+            if (deletedItem) {
+                setCategories((prevCategories) =>
+                    prevCategories.map((cat) =>
+                        cat.categoryId === deletedItem.categoryId
+                            ? { ...cat, items: Math.max((cat.items || 0) - 1, 0) }
+                            : cat
+                    )
+                );
+            }
+
+            toast.success("Item deleted successfully!");
+        } catch (err) {
+            console.error("Error deleting item:", err);
+            toast.error(err.response?.data?.message || "Failed to delete item.");
+        }
+    };
+
+    // Auth handling
+    const setAuthData = (token, role) => {
+        setAuth({ token, role });
+        if (token && role) {
+            localStorage.setItem("token", token);
+            localStorage.setItem("role", role);
+        } else {
+            localStorage.removeItem("token");
+            localStorage.removeItem("role");
+        }
+    };
 
     return (
-        <AppContext.Provider value={contextValue}>
+        <AppContext.Provider
+            value={{
+                categories,
+                setCategories,
+                items,
+                setItems,
+                loading,
+                setLoading,
+                handleDeleteCategory,
+                handleDeleteItem,
+                auth,
+                setAuthData,
+            }}
+        >
             {children}
         </AppContext.Provider>
-    )
-}
+    );
+};

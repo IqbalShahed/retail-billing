@@ -4,6 +4,7 @@ import bd.iqbalshahed.billingsoftware.entity.CategoryEntity;
 import bd.iqbalshahed.billingsoftware.io.CategoryRequest;
 import bd.iqbalshahed.billingsoftware.io.CategoryResponse;
 import bd.iqbalshahed.billingsoftware.repository.CategoryRepository;
+import bd.iqbalshahed.billingsoftware.repository.ItemRepository;
 import bd.iqbalshahed.billingsoftware.service.CategoryService;
 import bd.iqbalshahed.billingsoftware.service.CloudinaryService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final CloudinaryService cloudinaryService;
+    private  final ItemRepository itemRepository;
 
     @Override
     public CategoryResponse add(CategoryRequest request, MultipartFile file){
@@ -57,19 +59,20 @@ public class CategoryServiceImpl implements CategoryService {
                 .categoryId(UUID.randomUUID().toString())
                 .name(request.getName())
                 .description(request.getDescription())
-                .bgColor(request.getBgColor())
                 .build();
     }
 
     private CategoryResponse convertToResponse(CategoryEntity newCategory) {
+        Integer itemsCount = itemRepository.countByCategoryId(newCategory.getId());
+
         return CategoryResponse.builder()
                 .categoryId(newCategory.getCategoryId())
                 .name(newCategory.getName())
                 .description(newCategory.getDescription())
-                .bgColor(newCategory.getBgColor())
                 .imgUrl(newCategory.getImgUrl())
                 .createdAt(newCategory.getCreateAt())
                 .updatedAt(newCategory.getUpdateAt())
+                .items(itemsCount)
                 .build();
     }
 

@@ -1,18 +1,19 @@
 import React, { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import assets from "../assets/assets";
-import { addCategory } from "../service/CategoryService";
 import { AppContext } from "../context/AppContext";
+import { addItem } from "../service/ItemService";
 
 const MAX_IMAGE_SIZE_MB = 2;
 
-const CategoryForm = () => {
-    const { setCategories } = useContext(AppContext);
+const ItemForm = () => {
+    const { categories, setCategories, setItems } = useContext(AppContext);
     const [file, setFile] = useState(null);
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
-    
+    const [name, setName] = useState("");
+    const [price, setPrice] = useState("");
+    const [description, setDescription] = useState("");
+    const [category, setCategory] = useState("");
 
     const isValidImage = (f) =>
         f && f.type.startsWith("image/") && f.size <= MAX_IMAGE_SIZE_MB * 1024 * 1024;
@@ -27,35 +28,53 @@ const CategoryForm = () => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+
+        if (!category) {
+            toast.error("Please select a category!");
+            return;
+        }
+
         setLoading(true);
 
         try {
-            // Build the category request
-            const categoryRequest = {
+            // Build the request
+            const ItemRequest = {
                 name,
+                price: parseFloat(price), // ensure number
                 description,
+                categoryId: category,
             };
 
             // Build FormData
             const formData = new FormData();
-            formData.append("category", JSON.stringify(categoryRequest));
+            formData.append("item", JSON.stringify(ItemRequest));
             if (file) {
                 formData.append("file", file);
             }
 
             // Send request
-            const res = await addCategory(formData);
+            const res = await addItem(formData);
             if (res?.data) {
-                setCategories((prev) => [...prev, res.data]);
-                toast.success("Category added successfully!");
+                setItems((prev) => [...prev, res.data]);
+                setCategories((prevCategories) =>
+                    prevCategories.map((cat) =>
+                        cat.categoryId === category
+                            ? { ...cat, items: (cat.items || 0) + 1 }
+                            : cat
+                    )
+                );
+                toast.success("Item added successfully!");
             }
+
             // Reset form
             setFile(null);
             setName("");
             setDescription("");
+            setPrice("");
+            setCategory("");
         } catch (err) {
             console.error(err);
-            toast.error(err.response?.data?.message || "Failed to create category.");
+            toast.error(err.response?.data?.message || "Failed to add item.");
         } finally {
             setLoading(false);
         }
@@ -85,9 +104,9 @@ const CategoryForm = () => {
                 </label>
             </div>
 
-            {/* Category Name */}
+            {/* Item Name */}
             <div className="w-full">
-                <p className="mb-2">Category Name</p>
+                <p className="mb-2">Item Name</p>
                 <input
                     type="text"
                     className="w-full max-w-[500px] px-3 py-2 border border-gray-300"
@@ -98,9 +117,40 @@ const CategoryForm = () => {
                 />
             </div>
 
-            {/* Category Description */}
+            {/* Item Price */}
             <div className="w-full">
-                <p className="mb-2">Category Description</p>
+                <p className="mb-2">Price</p>
+                <input
+                    type="number"
+                    className="w-full max-w-[500px] px-3 py-2 border border-gray-300"
+                    placeholder="Enter price"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                    required
+                />
+            </div>
+
+            {/* Category Dropdown */}
+            <div className="w-full">
+                <p className="mb-2">Category</p>
+                <select
+                    className="w-full max-w-[500px] px-3 py-2 border border-gray-300"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    required
+                >
+                    <option value="">-- Select Category --</option>
+                    {categories.map((cat) => (
+                        <option key={cat.categoryId} value={cat.categoryId}>
+                            {cat.name}
+                        </option>
+                    ))}
+                </select>
+            </div>
+
+            {/* Item Description */}
+            <div className="w-full">
+                <p className="mb-2">Item Description</p>
                 <textarea
                     className="w-full max-w-[500px] px-3 py-2 border border-gray-300"
                     placeholder="Write content here"
@@ -109,6 +159,8 @@ const CategoryForm = () => {
                     required
                 />
             </div>
+
+            {/* Submit Button */}
             <button
                 type="submit"
                 className="w-28 py-3 mt-4 bg-black text-white rounded-lg"
@@ -120,4 +172,4 @@ const CategoryForm = () => {
     );
 };
 
-export default CategoryForm;
+export default ItemForm;

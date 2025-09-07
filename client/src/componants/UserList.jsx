@@ -1,28 +1,27 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Search, Trash2 } from "lucide-react";
-import { AppContext } from "../context/AppContext";
+import { Search, Trash2 } from 'lucide-react';
+import React, { useContext, useEffect, useState } from 'react';
+import { AppContext } from '../context/AppContext';
 
-const CategoryList = () => {
-    const {categories, loading, handleDeleteCategory} = useContext(AppContext);
-    const [filteredCategories, setFilteredCategories] = useState([]);
+const UserList = ({ users, handleDeleteUser }) => {
+    const {loading} = useContext(AppContext);
+    const [filterdUsers, setFilteredUsers] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
-
 
     // Filter when searchTerm changes
     useEffect(() => {
         if (searchTerm.trim() === "") {
-            setFilteredCategories(categories);
+            setFilteredUsers(users);
         } else {
             const lower = searchTerm.toLowerCase();
-            setFilteredCategories(
-                categories.filter(
-                    (cat) =>
-                        cat.name.toLowerCase().includes(lower) ||
-                        cat.description.toLowerCase().includes(lower)
+            setFilteredUsers(
+                users.filter(
+                    (user) =>
+                        user.name.toLowerCase().includes(lower) ||
+                        user.email.toLowerCase().includes(lower)
                 )
             );
         }
-    }, [searchTerm, categories]);
+    }, [searchTerm, users]);
 
     return (
         <div className="flex flex-col w-full gap-4">
@@ -31,7 +30,7 @@ const CategoryList = () => {
                 <Search className="w-5 h-5 text-gray-400" />
                 <input
                     type="text"
-                    placeholder="Search categories..."
+                    placeholder="Search users..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full ml-2 outline-none text-gray-700"
@@ -41,26 +40,25 @@ const CategoryList = () => {
             {/* Category List */}
             <div className="bg-white shadow-md rounded-2xl p-4 max-h-[70vh] overflow-y-auto">
                 {loading ? (
-                    <p className="text-center text-gray-500">Loading categories...</p>
-                ) : filteredCategories.length === 0 ? (
-                    <p className="text-center text-gray-500">No categories found.</p>
+                    <p className="text-center text-gray-500">Loading users...</p>
+                ) : filterdUsers.length === 0 ? (
+                    <p className="text-center text-gray-500">No user found.</p>
                 ) : (
                     <ul className="flex flex-col gap-3">
-                        {filteredCategories.map((cat) => (
+                        {filterdUsers.map((user) => (
                             <li
-                                key={cat.categoryId}
+                                key={user.userId}
                                 className="flex items-center justify-between gap-3 p-3 border border-gray-200 rounded-xl hover:shadow-sm transition"
                             >
                                 {/* Left: Category image + info */}
                                 <div className="flex items-center gap-3">
                                     <div
                                         className="w-12 h-12 flex-shrink-0 rounded-lg border border-gray-200 overflow-hidden flex items-center justify-center"
-                                        style={{ backgroundColor: "#f5f5f5" }}
                                     >
-                                        {cat.imgUrl ? (
+                                        {user.imgUrl ? (
                                             <img
-                                                src={cat.imgUrl}
-                                                alt={cat.name}
+                                                src={user.imgUrl}
+                                                alt={user.name}
                                                 className="w-full h-full object-cover"
                                             />
                                         ) : (
@@ -69,19 +67,16 @@ const CategoryList = () => {
                                     </div>
 
                                     <div className="flex flex-col">
-                                        <span className="font-medium text-gray-800">{cat.name}</span>
+                                        <span className="font-medium text-gray-800">{user.name}</span>
                                         <span className="text-sm text-gray-500 line-clamp-1">
-                                            {cat.description}
-                                        </span>
-                                        <span className="text-sm text-gray-500 line-clamp-1">
-                                            Total items: {cat.items}
+                                            {user.email}
                                         </span>
                                     </div>
                                 </div>
 
                                 {/* Right: Delete Icon */}
                                 <button
-                                    onClick={() => handleDeleteCategory(cat.categoryId)}
+                                    onClick={() => handleDeleteUser(user.userId, user.email)}
                                     className="p-2 rounded-full hover:bg-red-100 text-red-500 transition"
                                 >
                                     <Trash2 className="w-5 h-5" />
@@ -95,4 +90,4 @@ const CategoryList = () => {
     );
 };
 
-export default CategoryList;
+export default UserList;

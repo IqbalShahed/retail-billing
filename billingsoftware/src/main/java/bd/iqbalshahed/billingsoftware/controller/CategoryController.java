@@ -22,7 +22,7 @@ public class CategoryController {
     @PostMapping("/admin/categories")
     @ResponseStatus(HttpStatus.CREATED)
     public CategoryResponse addCategory(@RequestPart("category") String categoryString,
-                                        @RequestPart("file")MultipartFile file){
+                                        @RequestPart("file") MultipartFile file){
         ObjectMapper objectMapper = new ObjectMapper();
         CategoryRequest request = null;
         try{
@@ -34,7 +34,7 @@ public class CategoryController {
 
     }
 
-    @GetMapping
+    @GetMapping("/categories")
     public List<CategoryResponse> fetchCategories() {
         return categoryService.read();
     }
