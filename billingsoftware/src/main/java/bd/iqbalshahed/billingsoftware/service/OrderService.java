@@ -18,5 +18,5 @@ public interface OrderService {
 
     Long countByOrderDate(LocalDate date);
 
-    List<OrderResponse> findRecentOrders();
+    List<OrderResponse> findTodayRecentOrders();
 }

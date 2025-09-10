@@ -37,7 +37,7 @@ const CartItems = () => {
     return (
         <div>
             <p className="text-sm font-medium text-gray-600 mb-2">Cart Items</p>
-            <div className="space-y-3">
+            <div className="space-y-3"> {/** overflow-y-auto max-h-20 (For Scroll bar) */}
                 {cartItems.map((item) => (
                     <div
                         key={item.itemId}

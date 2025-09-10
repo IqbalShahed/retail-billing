@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -103,17 +104,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Double sumSalesByDate(LocalDate date) {
-        return orderEntityRepository.sumSalesbyDate(date);
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+        return orderEntityRepository.sumSalesbyDate(startOfDay, endOfDay);
     }
 
     @Override
     public Long countByOrderDate(LocalDate date) {
-        return orderEntityRepository.countByOrderDate(date);
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+        return orderEntityRepository.countByOrderDate(startOfDay, endOfDay);
     }
 
     @Override
-    public List<OrderResponse> findRecentOrders() {
-        return orderEntityRepository.findRecentOrders()
+    public List<OrderResponse> findTodayRecentOrders() {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
+
+        return orderEntityRepository.findTodayRecentOrders(startOfDay, endOfDay, PageRequest.of(0, 5))
                 .stream()
                 .map(this::convertToOrderResponse)
                 .collect(Collectors.toList());

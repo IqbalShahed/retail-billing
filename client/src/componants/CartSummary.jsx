@@ -47,10 +47,9 @@ const CartSummary = ({ customerName, setCustomerName, customerPhone, setCustomer
         try {
             const res = await createOrder(orderData);
             if (res.status === 201 && paymentMethod === "cash") {
-                setOrderDetails(res.data);
+                setOrderDetails(res.data);                
                 toast.success("Payment successful");
                 setShowPopup(true);
-                clearAll()
             } else {
                 toast.error("Failed to create order");
             }
@@ -92,11 +91,14 @@ const CartSummary = ({ customerName, setCustomerName, customerPhone, setCustomer
             <button className="flex-1 w-full py-3 mt-4 bg-black text-white rounded-lg cursor-pointer" onClick={() => completePayment("cash")} disabled={isProcessing}>
                 {isProcessing ? "Processing...." : "CASH"}
             </button>
-            {/* Receipt Popup */}
+            {/* Receipt Popup */}{console.log(showPopup)}
             {showPopup && (
                 <ReceiptPopup
                     orderDetails={orderDetails}
-                    onClose={() => { setShowPopup(false) }}
+                    onClose={() => { 
+                        setShowPopup(false);
+                        clearAll() 
+                    }}
                     onPrint={handlePrintReceipt}
                 />
             )}
