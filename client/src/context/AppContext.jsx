@@ -120,6 +120,10 @@ export const AppContextProvider = ({ children }) => {
         }
     }
 
+    const clearCart = () => {
+        setCartItems([]);
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -135,7 +139,8 @@ export const AppContextProvider = ({ children }) => {
                 setAuthData,
                 cartItems,
                 setCartItems,
-                addToCart
+                addToCart,
+                clearCart
             }}
         >
             {children}

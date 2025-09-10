@@ -72,12 +72,13 @@ const Explore = () => {
 
                 {/* Cart Summary */}
                 <div>
-                    <CartSummary />
+                    <CartSummary
+                        customerName={customerName}
+                        setCustomerName={setCustomerName}
+                        customerPhone={customerPhone}
+                        setCustomerPhone={setCustomerPhone}
+                    />
                 </div>
-
-                <button className="w-full py-3 mt-4 bg-black text-white rounded-lg">
-                    Checkout
-                </button>
             </div>
         </div>
     );
