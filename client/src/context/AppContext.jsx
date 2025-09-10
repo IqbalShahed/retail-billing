@@ -103,6 +103,23 @@ export const AppContextProvider = ({ children }) => {
         }
     };
 
+    // Add to Cart
+    const [cartItems, setCartItems] = useState([]);
+    const addToCart = (item) => {
+        const existingItem = cartItems.find(cartItem => cartItem.itemId === item.itemId);
+        if (existingItem) {
+            setCartItems(prev =>
+                prev.map(cartItem =>
+                    cartItem.itemId === item.itemId
+                        ? { ...cartItem, quantity: cartItem.quantity + 1 }
+                        : cartItem
+                )
+            );
+        } else {
+            setCartItems([...cartItems, { ...item, quantity: 1 }]);
+        }
+    }
+
     return (
         <AppContext.Provider
             value={{
@@ -116,6 +133,9 @@ export const AppContextProvider = ({ children }) => {
                 handleDeleteItem,
                 auth,
                 setAuthData,
+                cartItems,
+                setCartItems,
+                addToCart
             }}
         >
             {children}
