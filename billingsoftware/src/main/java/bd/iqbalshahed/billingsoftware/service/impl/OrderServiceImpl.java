@@ -9,8 +9,11 @@ import bd.iqbalshahed.billingsoftware.io.PaymentMethod;
 import bd.iqbalshahed.billingsoftware.repository.OrderEntityRepository;
 import bd.iqbalshahed.billingsoftware.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -93,6 +96,24 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderResponse> getOrders() {
         return orderEntityRepository.findAllByOrderByCreatedAtDesc()
+                .stream()
+                .map(this::convertToOrderResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Double sumSalesByDate(LocalDate date) {
+        return orderEntityRepository.sumSalesbyDate(date);
+    }
+
+    @Override
+    public Long countByOrderDate(LocalDate date) {
+        return orderEntityRepository.countByOrderDate(date);
+    }
+
+    @Override
+    public List<OrderResponse> findRecentOrders() {
+        return orderEntityRepository.findRecentOrders()
                 .stream()
                 .map(this::convertToOrderResponse)
                 .collect(Collectors.toList());

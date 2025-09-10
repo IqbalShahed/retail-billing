@@ -31,7 +31,7 @@ const DisplayItems = ({ items, selectedCategory }) => {
     return (
         <div className="flex flex-col gap-4">
             {/* Search Bar */}
-            <div className="flex items-center w-full border border-gray-300 rounded-xl px-3 py-2 bg-white">
+            <div className="flex items-center w-64 border border-gray-300 rounded-xl px-3 py-2 bg-white">
                 <Search className="w-5 h-5 text-gray-400" />
                 <input
                     type="text"

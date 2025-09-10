@@ -5,13 +5,15 @@ import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
     const navigate = useNavigate();
-    const {setAuthData} = useContext(AppContext);
+    const { setAuthData, auth } = useContext(AppContext);
     const handleLogout = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("role");
         setAuthData(null, null);
         navigate("/login");
     }
+
+    const isAdmin = auth.role === "ROLE_ADMIN";
 
     return (
         // Top navigation
@@ -40,30 +42,46 @@ const Navbar = () => {
                         </>
                     )}
                 </NavLink>
-                <NavLink to="/manage-items" className="flex flex-col items-center gap-1">
-                    {({ isActive }) => (
+                {
+                    isAdmin && (
                         <>
-                            <p>MANAGE ITEMS</p>
-                            <hr
-                                className={`${isActive ? 'w-2/4 border-none h-[1.5px] bg-gray-700' : 'hidden'}`}
-                            />
+                            <NavLink to="/manage-items" className="flex flex-col items-center gap-1">
+                                {({ isActive }) => (
+                                    <>
+                                        <p>MANAGE ITEMS</p>
+                                        <hr
+                                            className={`${isActive ? 'w-2/4 border-none h-[1.5px] bg-gray-700' : 'hidden'}`}
+                                        />
+                                    </>
+                                )}
+                            </NavLink>
+                            <NavLink to="/manage-categories" className="flex flex-col items-center gap-1">
+                                {({ isActive }) => (
+                                    <>
+                                        <p>MANAGE CATEGORIES</p>
+                                        <hr
+                                            className={`${isActive ? 'w-2/4 border-none h-[1.5px] bg-gray-700' : 'hidden'}`}
+                                        />
+                                    </>
+                                )}
+                            </NavLink>
+                            <NavLink to="/manage-users" className="flex flex-col items-center gap-1">
+                                {({ isActive }) => (
+                                    <>
+                                        <p>MANAGE USERS</p>
+                                        <hr
+                                            className={`${isActive ? 'w-2/4 border-none h-[1.5px] bg-gray-700' : 'hidden'}`}
+                                        />
+                                    </>
+                                )}
+                            </NavLink>
                         </>
-                    )}
-                </NavLink>
-                <NavLink to="/manage-categories" className="flex flex-col items-center gap-1">
+                    )
+                }
+                <NavLink to="/orders-history" className="flex flex-col items-center gap-1">
                     {({ isActive }) => (
                         <>
-                            <p>MANAGE CATEGORIES</p>
-                            <hr
-                                className={`${isActive ? 'w-2/4 border-none h-[1.5px] bg-gray-700' : 'hidden'}`}
-                            />
-                        </>
-                    )}
-                </NavLink>
-                <NavLink to="/manage-users" className="flex flex-col items-center gap-1">
-                    {({ isActive }) => (
-                        <>
-                            <p>MANAGE USERS</p>
+                            <p>ORDER HISTORY</p>
                             <hr
                                 className={`${isActive ? 'w-2/4 border-none h-[1.5px] bg-gray-700' : 'hidden'}`}
                             />

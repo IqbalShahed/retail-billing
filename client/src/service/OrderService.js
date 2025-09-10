@@ -27,7 +27,7 @@ export const createOrder = async (order) => {
 export const deleteOrder = async (orderId) => {
     try {
         const res = await api.delete(`/api/v1/orders/${orderId}`);
-        return res.data;
+        return res;
     } catch (error) {
         throw error.response?.data || error.message;
     }
@@ -36,7 +36,7 @@ export const deleteOrder = async (orderId) => {
 export const fetchOrders = async () => {
     try {
         const res = await api.get("/api/v1/orders");
-        return res.data;
+        return res;
     } catch (error) {
         throw error.response?.data || error.message;
     }
