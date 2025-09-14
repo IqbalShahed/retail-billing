@@ -7,12 +7,12 @@ import { AppContext } from "../context/AppContext";
 const MAX_IMAGE_SIZE_MB = 2;
 
 const CategoryForm = () => {
-    const { setCategories } = useContext(AppContext);
+    const { setCategories, auth } = useContext(AppContext);
     const [file, setFile] = useState(null);
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
-    
+
 
     const isValidImage = (f) =>
         f && f.type.startsWith("image/") && f.size <= MAX_IMAGE_SIZE_MB * 1024 * 1024;
@@ -30,6 +30,13 @@ const CategoryForm = () => {
         setLoading(true);
 
         try {
+            // Message for DEMO
+            if (auth.role === "ROLE_DEMO") {
+                toast.error("Demo users cannot perform this action.");
+                return;
+            }
+
+
             // Build the category request
             const categoryRequest = {
                 name,

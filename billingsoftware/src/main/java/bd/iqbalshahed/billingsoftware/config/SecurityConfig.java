@@ -3,6 +3,7 @@ package bd.iqbalshahed.billingsoftware.config;
 import bd.iqbalshahed.billingsoftware.filter.JwtRequestFilter;
 import bd.iqbalshahed.billingsoftware.service.impl.AppUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,6 +36,7 @@ public class SecurityConfig {
         http.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/login", "/encode").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categories", "/items", "/orders", "/dashboard").hasAnyRole("USER", "ADMIN", "DEMO")
                         .requestMatchers("/categories", "/items", "/orders", "/dashboard").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())

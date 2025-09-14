@@ -7,7 +7,7 @@ import { addItem } from "../service/ItemService";
 const MAX_IMAGE_SIZE_MB = 2;
 
 const ItemForm = () => {
-    const { categories, setCategories, setItems } = useContext(AppContext);
+    const { categories, setCategories, setItems, auth } = useContext(AppContext);
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const [name, setName] = useState("");
@@ -28,6 +28,11 @@ const ItemForm = () => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        if (auth.role === "ROLE_DEMO") {
+            toast.error("Demo users cannot perform this action.");
+            return;
+        }
+
 
         if (!category) {
             toast.error("Please select a category!");

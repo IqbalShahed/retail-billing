@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppContext } from '../context/AppContext';
 import { deleteUser, fetchUsers } from '../service/UserService';
 import { toast } from 'react-toastify';
@@ -7,7 +7,7 @@ import UserForm from '../componants/UserForm';
 import UserList from '../componants/UserList';
 
 const ManageUsers = () => {
-    const { setLoading } = useContext(AppContext);
+    const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState([]);
 
     useEffect(() => {

@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import assets from "../assets/assets";
-import { AppContext } from "../context/AppContext";
 import { addUser } from "../service/UserService";
+import { AppContext } from "../context/AppContext";
 
 const MAX_IMAGE_SIZE_MB = 2;
 
 const UserForm = ({ setUsers }) => {
+    const { auth } = useContext(AppContext);
     const [file, setFile] = useState(null);
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -27,6 +28,10 @@ const UserForm = ({ setUsers }) => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        if (auth.role === "ROLE_DEMO") {
+            toast.error("Demo users cannot perform this action.");
+            return;
+        }
         setLoading(true);
 
         try {

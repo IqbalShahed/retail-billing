@@ -14,6 +14,7 @@ const Navbar = () => {
     }
 
     const isAdmin = auth.role === "ROLE_ADMIN";
+    const isDemo = auth.role === "ROLE_DEMO";
 
     return (
         // Top navigation
@@ -43,7 +44,7 @@ const Navbar = () => {
                     )}
                 </NavLink>
                 {
-                    isAdmin && (
+                    (isAdmin || isDemo) && (
                         <>
                             <NavLink to="/manage-items" className="flex flex-col items-center gap-1">
                                 {({ isActive }) => (

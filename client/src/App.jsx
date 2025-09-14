@@ -44,14 +44,14 @@ const App = () => {
       }
       <ToastContainer />
       <Routes>
-        <Route path="/" element={<ProtectedRoute element={<Dashboard />} allowedRoles={["ROLE_ADMIN", "ROLE_USER"]} />} />
+        <Route path="/" element={<ProtectedRoute element={<Dashboard />} allowedRoles={["ROLE_ADMIN", "ROLE_USER", "ROLE_DEMO"]} />} />
         <Route path="/login" element={<LoginRoute element={<Login />} />} />
-        <Route path="/explore" element={<ProtectedRoute element={<Explore />} allowedRoles={["ROLE_ADMIN", "ROLE_USER"]} />} />
+        <Route path="/explore" element={<ProtectedRoute element={<Explore />} allowedRoles={["ROLE_ADMIN", "ROLE_USER", "ROLE_DEMO"]} />} />
         {/**Admin Only */}
-        <Route path="/manage-items" element={<ProtectedRoute element={<ManageItems />} allowedRoles={["ROLE_ADMIN"]} />} />
-        <Route path="/manage-categories" element={<ProtectedRoute element={<ManageCategories />} allowedRoles={["ROLE_ADMIN"]} />} />
-        <Route path="/manage-users" element={<ProtectedRoute element={<ManageUsers />} allowedRoles={["ROLE_ADMIN"]} />} />
-        <Route path="/orders-history" element={<ProtectedRoute element={<OrderHistory />} allowedRoles={["ROLE_ADMIN", "ROlE_USER"]} />} />
+        <Route path="/manage-items" element={<ProtectedRoute element={<ManageItems />} allowedRoles={["ROLE_ADMIN", "ROLE_DEMO"]} />} />
+        <Route path="/manage-categories" element={<ProtectedRoute element={<ManageCategories />} allowedRoles={["ROLE_ADMIN", "ROLE_DEMO"]} />} />
+        <Route path="/manage-users" element={<ProtectedRoute element={<ManageUsers />} allowedRoles={["ROLE_ADMIN", "ROLE_DEMO"]} />} />
+        <Route path="/orders-history" element={<ProtectedRoute element={<OrderHistory />} allowedRoles={["ROLE_ADMIN", "ROLE_USER", "ROLE_DEMO"]} />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
