@@ -1,12 +1,27 @@
-# Use official Java 21 image
-FROM eclipse-temurin:21-jdk-jammy as build
+# ========= Stage 1: Build =========
+FROM eclipse-temurin:21-jdk AS builder
+WORKDIR /app
 
-# Copy Spring Boot jar from target folder
-ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} app.jar
+# Copy Maven wrapper & pom first for dependency caching
+COPY mvnw ./
+COPY .mvn .mvn
+COPY pom.xml .
 
-# Expose the port (Render will override with $PORT)
+# Pre-download dependencies (for faster builds)
+RUN ./mvnw dependency:go-offline
+
+# Copy the rest of the source code
+COPY src ./src
+
+# Build the jar inside the container
+RUN ./mvnw clean package -DskipTests
+
+# ========= Stage 2: Run =========
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+# Copy jar from builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
 EXPOSE 8080
-
-# Use Render's $PORT environment variable at runtime
-ENTRYPOINT ["sh", "-c", "java -Dserver.port=$PORT -jar /app.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
