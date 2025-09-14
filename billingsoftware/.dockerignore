@@ -1,0 +1,9 @@
+target/*.original
+target/classes
+target/test-classes
+target/generated-sources
+target/maven-status
+.git
+.gitignore
+node_modules
+Dockerfile
