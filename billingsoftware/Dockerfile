@@ -2,12 +2,15 @@
 FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
 
-# Copy Maven wrapper & pom first for dependency caching
+# Copy Maven wrapper & pom first
 COPY mvnw ./
 COPY .mvn .mvn
 COPY pom.xml .
 
-# Pre-download dependencies (for faster builds)
+# Give execute permission to mvnw
+RUN chmod +x mvnw
+
+# Pre-download dependencies
 RUN ./mvnw dependency:go-offline
 
 # Copy the rest of the source code
@@ -20,7 +23,6 @@ RUN ./mvnw clean package -DskipTests
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# Copy jar from builder stage
 COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
